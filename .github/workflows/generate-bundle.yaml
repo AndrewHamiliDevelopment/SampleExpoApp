@@ -32,10 +32,10 @@ jobs:
       - name: Determine project type
         id: check-proj
         run: |
-            if [ -f package.json ]; then
+            if [ -f gradlew ]; then
               echo "Android Native"
               echo "proj_type=an" >> $GITHUB_OUTPUT
-            elif [ -f app.json ]; then
+            elif [ -f package.json ] && [ -f app.json ]; then
               echo "React Native (Expo?)"
               echo "proj_type=rn" >> $GITHUB_OUTPUT
             else
