@@ -12,9 +12,9 @@ jobs:
       - name: Evaluate build type
         id: check-build
         run: |
-          if [[ "${{github.ref}}" == "*-debug"]]; then
+          if [[ "${{github.ref}}" == "*-debug" ]]; then
             echo "build_type=debug" >> $GITHUB_OUTPUT
-          elif [[ "${{github.ref}}"  == "*-release "]]; then
+          elif [[ "${{github.ref}}"  == "*-release " ]]; then
             echo "build_type=release" >> $GITHUB_OUTPUT
           else
             echo "Unsupported tag format. Stopping workflow prematurely"
