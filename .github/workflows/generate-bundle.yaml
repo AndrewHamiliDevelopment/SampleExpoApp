@@ -34,7 +34,7 @@ jobs:
         run: |
             if [ -f package.json ]; then
               echo "proj_type=an" >> $GITHUB_OUTPUT
-            elif [ -f app.json ];
+            elif [ -f app.json ]; then
               echo "proj_type=rn" >> $GITHUB_OUTPUT
             else
               echo "Could not determine project type"
