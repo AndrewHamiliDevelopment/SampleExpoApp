@@ -1,0 +1,66 @@
+name: android bundle
+
+on:
+  workflow_dispatch:
+
+jobs:
+  determine-build-type:
+    runs-on: ubuntu-latest
+    outputs:
+      build_type: ${{steps.check-build.outputs.build_type}}
+    steps:
+      - name: Evaluate build type
+        id: check-build
+        run: |
+          if [[ "${{github.ref}}" == "*-debug"]]; then
+            echo "build_type=debug" >> $GITHUB_OUTPUT
+          elif [[ "${{github.ref}}"  == "*-release "]]; then
+            echo "build_type=release" >> $GITHUB_OUTPUT
+          else
+            echo "Unsupported tag format. Stopping workflow prematurely"
+            echo "build_type=skip" >> $GITHUB_OUTPUT
+          fi
+
+  determine-project-type:
+    runs-on: ubuntu-latest
+    outputs:
+      proj_type: ${{steps.check-proj.outputs.proj_type}}
+    steps:
+      - name: Checkout project 
+        uses: actions/checkout@v7
+
+      - name: Determine project type
+        id: check-proj
+        run: |
+            if [ -f package.json ]; then
+              echo "proj_type=an" >> $GITHUB_OUTPUT
+            elif [ -f app.json ];
+              echo "proj_type=rn" >> $GITHUB_OUTPUT
+            else
+              echo "Could not determine project type"
+            fi
+
+  bundle-generator:
+    runs-on: ubuntu-latest
+    needs: determine-build-type
+
+    if: needs.determine-build-type != 'skip' && needs.determine-build-type != ''
+
+    steps:
+      - name: Setup Java 17
+        uses: actions/setup-java@v6
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+          cache: 'gradle'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v4
+
+      - name: Build Debug
+        if: needs.determine-build-type == 'debug'
+        run: ./gradlew assembleDebug
+      
+      - name: Build release
+        if: needs.determine-build-type == 'release'
+        run: ./gradlew bundleRelease
