@@ -76,14 +76,14 @@ jobs:
 
 
       - name: Build Debug
-        if: needs.determine-build-type == 'debug'
+        if: needs.determine-build-type.outputs.build_type == 'debug'
         run: |
           DIR="${{ needs.determine-project-type.outputs.proj_type == 'rn' && 'android' || '.' }}"
           cd $DIR
           ./gradlew assembleDebug
       
       - name: Build release
-        if: needs.determine-build-type == 'release'
+        if: needs.determine-build-type.outputs.build_type == 'release'
         run: |
           DIR="${{ needs.determine-project-type.outputs.proj_type == 'rn' && 'android' || '.' }}"
           cd $DIR
